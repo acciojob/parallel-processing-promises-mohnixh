@@ -12,30 +12,34 @@ const output = document.getElementById("output");
         function downloadImage(url) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                img.src = url;
-
+                
                 img.onload = () => resolve(img);
                 img.onerror = () => reject(`❌ Failed to load image: ${url}`);
+                
+                img.src = url;
             });
         }
 
         function downloadImages() {
-            // Clear previous results
+            console.log("downloadImages called");
             output.innerHTML = "";
             errorDiv.innerHTML = "";
-            
-            // Show loading spinner
             loadingDiv.style.display = "block";
 
-            return Promise.all(imageUrls.map(downloadImage))
+            const promises = imageUrls.map(downloadImage);
+            console.log("Created promises:", promises);
+
+            Promise.all(promises)
                 .then((images) => {
-                    // Hide loading spinner
+                    console.log("All images loaded:", images);
                     loadingDiv.style.display = "none";
-                    // Display all images
-                    images.forEach((img) => output.appendChild(img));
+                    images.forEach((img) => {
+                        console.log("Appending image:", img.src);
+                        output.appendChild(img);
+                    });
                 })
                 .catch((err) => {
-                    // Hide loading spinner and show error
+                    console.error("Error loading images:", err);
                     loadingDiv.style.display = "none";
                     errorDiv.innerHTML = err;
                 });
