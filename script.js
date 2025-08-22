@@ -12,31 +12,33 @@ const output = document.getElementById("output");
         function downloadImage(url) {
             return new Promise((resolve, reject) => {
                 const img = new Image();
-                
+                img.src = url;
+
                 img.onload = () => resolve(img);
                 img.onerror = () => reject(`❌ Failed to load image: ${url}`);
-                
-                img.src = url;
             });
         }
 
         function downloadImages() {
+            // Clear previous results
             output.innerHTML = "";
             errorDiv.innerHTML = "";
-            errorDiv.style.display = "none";
+            
+            // Show loading spinner
             loadingDiv.style.display = "block";
 
             return Promise.all(imageUrls.map(downloadImage))
                 .then((images) => {
+                    // Hide loading spinner
                     loadingDiv.style.display = "none";
+                    // Display all images
                     images.forEach((img) => output.appendChild(img));
                 })
                 .catch((err) => {
+                    // Hide loading spinner and show error
                     loadingDiv.style.display = "none";
                     errorDiv.innerHTML = err;
-                    errorDiv.style.display = "block";
                 });
         }
 
         btn.addEventListener("click", downloadImages);
-    </script>
